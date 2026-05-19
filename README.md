@@ -8,6 +8,14 @@
 
 ---
 
+## 📱 预览（Loon / iOS 实机截图）
+
+<p align="center">
+  <img src="screenshots/dashboard.jpg" width="280" alt="Loon 主面板">
+</p>
+
+<p align="center"><i>规则模式运行中 · 6 个节点 · 21 个插件 · 上下行实时统计</i></p>
+
 ## 设计哲学
 
 > 能走中国的全走直连，剩下的走代理。国内用得多，所以默认偏向直连。
@@ -26,6 +34,25 @@ FINAL,Final                 # 走到这 = 确认是国外的 → Global 代理
 
 代价：这条早于远程广告列表，**国内 IP 上的部分广告会少拦**——靠下面的分层去广告补回来。
 
+## 策略组一览
+
+哲学落到策略组就是下面这套。可以直观看到：地区组 + 自动测速、AI 全系经 `Vmrack-Reality` 链式出口、`China = DIRECT`、`Advertising/Privacy = REJECT`、`Final` 兜底走 `Global→US→Vmrack-Reality`。
+
+<table>
+  <tr>
+    <td><img src="screenshots/policy-1-regions.jpg" width="210" alt="地区组与自动测速"></td>
+    <td><img src="screenshots/policy-2-ai-media.jpg" width="210" alt="AI 与流媒体"></td>
+    <td><img src="screenshots/policy-3-services.jpg" width="210" alt="常用服务与社交"></td>
+    <td><img src="screenshots/policy-4-china-final.jpg" width="210" alt="China/拦截/兜底"></td>
+  </tr>
+  <tr align="center">
+    <td><sub>地区组 · Auto · 电竞低延迟</sub></td>
+    <td><sub>Google · AI 系列 · Media · YouTube</sub></td>
+    <td><sub>常用服务 · 社交（Apple/MS 直连）</sub></td>
+    <td><sub>China 直连 · 广告拦截 · Final</sub></td>
+  </tr>
+</table>
+
 ## 去广告分三层（互不依赖路由）
 
 1. **本地精准 REJECT 块**（`[Rule]` 最顶端）：穿山甲 / 优量汇 / 百度联盟 / 阿里妈妈等国内大广告联盟，只收「广告专用子域」，绝不碰内容主域。放最顶是为了压过 `qq.com/.cn→China` 和 GEOIP 兜底。
@@ -33,6 +60,25 @@ FINAL,Final                 # 走到这 = 确认是国外的 → Global 代理
 3. **MITM 重写插件**：fmz200 去广告合集（约 730 款 App，主力）+ app2smile 各 App + ddgksf2013 微博。**这层和路由无关**，直连也生效。
 
 > 抖音去广告：本版**开启**（`[Mitm]` 未排除字节系主机，fmz200 可 MITM 抖音）。代价：抖音核心接口有证书锁定，MITM 偶发握手冲突，极端情况下抖音可能不稳/加载慢——这是「抖音去广告」的固有取舍。想要「抖音绝对稳但有广告」，把字节系主机加进 `[Mitm]` 的 `-` 强制排除即可。
+
+### 已装插件实拍
+
+去广告合集 fmz200 + app2smile 各 App（B站/知乎/贴吧/腾讯新闻/百度防跳转）+ ddgksf2013 微博 + blackmatrix7 Advertising 重写 + iRingo 系列 Apple 服务增强 + DualSubs 双语字幕 + YouTube Music 解锁 + Sub-Store/BoxJs：
+
+<table>
+  <tr>
+    <td><img src="screenshots/plugin-1.jpg" width="210" alt="插件列表 1"></td>
+    <td><img src="screenshots/plugin-2.jpg" width="210" alt="插件列表 2"></td>
+    <td><img src="screenshots/plugin-3.jpg" width="210" alt="插件列表 3"></td>
+    <td><img src="screenshots/plugin-4.jpg" width="210" alt="插件列表 4"></td>
+  </tr>
+  <tr align="center">
+    <td><sub>BoxJs · Sub-Store · 微博 · 重写</sub></td>
+    <td><sub>DualSubs · iRingo 系列</sub></td>
+    <td><sub>解锁 · B站 · fmz200 合集</sub></td>
+    <td><sub>知乎 · 贴吧 · 腾讯新闻 · 百度</sub></td>
+  </tr>
+</table>
 
 ## 其它要点
 
