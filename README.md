@@ -42,10 +42,37 @@ FINAL,Final                 # 走到这 = 确认是国外的 → Global 代理
 - **TikTok vs 抖音**：只收 TikTok 专用域名走代理；抖音那套 `snssdk/pstatp/bytedance` 走直连，注意 `isnssdk≠snssdk`、`ipstatp≠pstatp` 这类 i/sg 前缀变体，互不冲突。
 - **WhatsApp**：已删 3 条超宽 AWS 网段（`/12`、`/15`），那是 WhatsApp 早年跑 AWS 的遗留，会误吞无关流量；现靠域名规则足够。
 
-## 使用
+## 节点配置放哪里 ——「自建 VPS」和「机场订阅」位置不一样 ⚠️
 
-1. 替换 `[Proxy]` 占位符为你自己的节点；订阅机场填 `[Remote Proxy]` 并把 `enabled` 改 `true`。
-2. Loon 导入 `loon.conf`。
+这是最容易填错的地方。两者在配置里是**两个不同的段**，别填混：
+
+### ① 自建 VPS / 单条节点 → `[Proxy]` 段
+
+手动一行一个节点，自己机器/朋友的服务器就填这里。本仓库已脱敏成占位符，照格式替换：
+
+```ini
+[Proxy]
+# Trojan：  名称 = Trojan,你的域名,端口,"密码",transport=tcp,sni=你的域名
+MyVPS-SG = Trojan,your.domain.com,8443,"YOUR_PASSWORD",transport=tcp,sni=your.domain.com
+# VLESS-Reality：public-key/short-id 由服务端给出
+Vmrack-Reality = VLESS,your.domain.com,8443,"YOUR_UUID",transport=tcp,flow=xtls-rprx-vision,public-key="YOUR_KEY",short-id=YOUR_SHORT_ID,udp=true,over-tls=true,sni=www.sony.com
+```
+
+### ② 机场订阅链接 → `[Remote Proxy]` 段（**不是** `[Proxy]`）
+
+机场给的是一个**订阅 URL**，不是单条节点。填到 `[Remote Proxy]`，并把 `enabled=false` 改成 `true`：
+
+```ini
+[Remote Proxy]
+机场1 = https://你的机场订阅地址,udp=true,block-quic=true,fast-open=true,enabled=true
+```
+
+> 一句话区分：**一条条手写的服务器 → `[Proxy]`；一个网址拉一堆节点 → `[Remote Proxy]`。** 填反了 Loon 解析不出节点，策略组会空。机场节点经 `[Remote Filter]` 自动按地区（US/HK/JP/SG/TW）筛进对应策略组，无需手动加。
+
+## 使用步骤
+
+1. 按上面 ①②，把 `[Proxy]` 占位符换成你的自建节点，机场订阅填 `[Remote Proxy]` 并 `enabled=true`（两个都没有就只用得到直连/规则部分）。
+2. Loon 导入 `loon.conf`（或从 [Releases](../../releases) 直接下载最新版配置文件）。
 3. 去广告/增强需 **开启 MITM 并安装信任 CA 证书**；部分 App 要清缓存或重装才生效。
 4. 想改抖音去广告/稳定性取舍，见上文「去广告分三层」。
 
