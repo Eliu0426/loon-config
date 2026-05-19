@@ -124,7 +124,26 @@ Vmrack-Reality = VLESS,your.domain.com,8443,"YOUR_UUID",transport=tcp,flow=xtls-
 
 ## 致谢
 
-规则与插件来自社区开源：[blackmatrix7](https://github.com/blackmatrix7/ios_rule_script)、[app2smile](https://github.com/app2smile/rules)、[fmz200/奶思](https://github.com/fmz200/wool_scripts)、[ddgksf2013](https://github.com/ddgksf2013/Rewrite)、[Maasea](https://github.com/Maasea/sgmodule)、[Hackl0us GeoIP2-CN](https://github.com/Hackl0us/GeoIP2-CN)、[Koolson/Qure 图标](https://github.com/Koolson/Qure)。
+本配置站在社区肩膀上，规则 / 脚本 / 插件 / 图标均来自以下开源项目，按用途列出：
+
+**分流规则 & 去广告**
+- [blackmatrix7 / ios_rule_script](https://github.com/blackmatrix7/ios_rule_script) —— 分流规则列表 + Advertising/Redirect 去广告重写
+- [fmz200 / wool_scripts（奶思）](https://github.com/fmz200/wool_scripts) —— 去广告合集（约 730 款 App，主力）
+- [app2smile / rules](https://github.com/app2smile/rules) —— B站/知乎/贴吧/腾讯新闻去广告、百度防跳转、YouTube Music 解锁
+- [ddgksf2013 / Rewrite](https://github.com/ddgksf2013/Rewrite) —— 微博去广告
+
+**App 增强 & 脚本**
+- [NSRingo（iRingo）](https://github.com/NSRingo) —— Apple 服务国际化增强：定位 / 地图 / Siri / Spotlight / TestFlight / Apple TV / Apple News
+- [DualSubs](https://github.com/DualSubs) —— YouTube 双语字幕（含歌词）
+- [Maasea / sgmodule](https://github.com/Maasea/sgmodule) —— YouTube / YouTube Music 去广告与后台播放脚本
+
+**工具 & 数据**
+- [Peng-YM / Sub-Store](https://github.com/Peng-YM/Sub-Store) —— 订阅管理
+- [chavyleung / scripts（BoxJs）](https://github.com/chavyleung/scripts) —— 持久化数据管理
+- [Hackl0us / GeoIP2-CN](https://github.com/Hackl0us/GeoIP2-CN) —— GEOIP CN 库（解析型兜底依赖它）
+- [Koolson / Qure](https://github.com/Koolson/Qure) —— 策略组图标
+
+感谢以上作者的持续维护。如有遗漏请提 Issue 补充。
 
 ## 免责声明
 
