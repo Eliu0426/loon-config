@@ -1,0 +1,12 @@
+# 防止误提交未脱敏的真实配置（任何带 -secret/-private/-real 后缀的副本）
+*-secret.conf
+*-private.conf
+*-real.conf
+loon-conf*.txt
+sliu*.txt
+
+# OS / 编辑器
+.DS_Store
+Thumbs.db
+*.swp
+*~
