@@ -1,7 +1,7 @@
-# 让 GitHub Linguist 把 .conf 识别为 INI（Loon/Surge/QX 的配置语法接近 INI）
-# 不加这条 .conf 不被识别，仓库右侧 Languages 一栏空白
-*.conf linguist-language=INI
-*.conf linguist-detectable=true
+# 让 GitHub Linguist 把 .conf 识别为 INI（Loon/Surge/QX 的配置语法接近 INI）。
+# 不加这条 .conf 不被识别，仓库右侧 Languages 一栏空白。
+# linguist-detectable 必加：INI 在 Linguist 里是 type: data，默认不计入语言统计
+*.conf linguist-language=INI linguist-detectable=true
 
 # screenshots/ 仅展示用，不参与语言统计
 screenshots/* linguist-documentation=true
