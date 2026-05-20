@@ -91,7 +91,7 @@ FINAL,Final                 # 走到这 = 确认是国外的 → Global 代理
 
 ## 其它要点
 
-- **DNS**：阿里公共 DNS 打头 + DoH（阿里 / dnspod / 360），不优先吃运营商 DNS。
+- **DNS**：`dns-server = system,阿里DNS,腾讯DNS,...` —— **`system` 必须放首位**（v1.1 修复）。原因：很多校园网/酒店网络封了出站 UDP 53 到公网 DNS，节点域名解析直接 timeout 看起来像节点被封，实际只是 DNS 没出去；`system` 让 Loon 用 iOS 当前网络派发的 DNS（家里/4G 走运营商，校园走路由器→上游校园 DNS），三种网络通用一份配置。后面 223/119 是冗余，DoH（阿里 / dnspod / 360）走 443 加密兜底。
 - **AI 隔离**：OpenAI/Claude/Gemini/Grok/DeepSeek 分别走不同出口；Claude/AI-API 经**链式住宅 IP**（设备→VPS→住宅代理→目标），对 AI 风控更友好。
 - **QUIC**：YouTube 定点封 UDP 443 强制走 TCP，否则 MITM 去广告失效。
 - **TikTok vs 抖音**：只收 TikTok 专用域名走代理；抖音那套 `snssdk/pstatp/bytedance` 走直连，注意 `isnssdk≠snssdk`、`ipstatp≠pstatp` 这类 i/sg 前缀变体，互不冲突。
