@@ -124,12 +124,36 @@ Vmrack-Reality = VLESS,your.domain.com,8443,"YOUR_UUID",transport=tcp,flow=xtls-
 
 > 一句话区分：**一条条手写的服务器 → `[Proxy]`；一个网址拉一堆节点 → `[Remote Proxy]`。** 填反了 Loon 解析不出节点，策略组会空。机场节点经 `[Remote Filter]` 自动按地区（US/HK/JP/SG/TW）筛进对应策略组，无需手动加。
 
+## 🚀 一键导入（按你的节点情况三选一）
+
+iOS Safari 打开下面对应你场景的链接，会自动调起 Loon 完成导入（已安装 Loon 的情况下）：
+
+| 场景 | 一键导入 |
+|---|---|
+| **机场订阅 + 自建 VPS（主版）** | [👉 导入 loon.conf](https://www.nsloon.com/openloon/import?sub=https%3A%2F%2Fraw.githubusercontent.com%2FEliu0426%2Floon-config%2Fmain%2Floon.conf) |
+| **只用机场订阅** | [👉 导入 loon-airport.conf](https://www.nsloon.com/openloon/import?sub=https%3A%2F%2Fraw.githubusercontent.com%2FEliu0426%2Floon-config%2Fmain%2Floon-airport.conf) |
+| **只用自建 VPS** | [👉 导入 loon-vps.conf](https://www.nsloon.com/openloon/import?sub=https%3A%2F%2Fraw.githubusercontent.com%2FEliu0426%2Floon-config%2Fmain%2Floon-vps.conf) |
+
+> 不能跳转或想手动导入？打开 Loon → 配置 → 添加远端配置 → 粘贴对应 raw URL：
+> - `https://raw.githubusercontent.com/Eliu0426/loon-config/main/loon.conf` （主版，机场+VPS）
+> - `https://raw.githubusercontent.com/Eliu0426/loon-config/main/loon-airport.conf` （机场版）
+> - `https://raw.githubusercontent.com/Eliu0426/loon-config/main/loon-vps.conf` （VPS 版）
+
+**三个变体的区别**（详细差异见各 `.conf` 文件的注释头）：
+
+- **主版 `loon.conf`**：保留全部功能。`[Proxy]` 段填 VPS，`[Remote Proxy]` 段填机场订阅并 `enabled=true`，两者节点都进策略组
+- **机场版 `loon-airport.conf`**：`[Proxy]` 段空、`[Proxy Chain]` 移除；地区组只读订阅过滤；AI 组退化为按地区组优先级（无住宅 IP 链式出口）；**只需填一个订阅 URL 即可用**
+- **VPS 版 `loon-vps.conf`**：`[Remote Proxy]`/`[Remote Filter]` 注释空置；地区组只引自建节点；`Auto`/`Asia-LowLatency` 显式列节点（无 `AllNodes` 过滤器）；保留 `IPRoyal-Via-VPS` 链式出口
+
 ## 使用步骤
 
-1. 按上面 ①②，把 `[Proxy]` 占位符换成你的自建节点，机场订阅填 `[Remote Proxy]` 并 `enabled=true`（两个都没有就只用得到直连/规则部分）。
-2. Loon 导入 `loon.conf`（或从 [Releases](../../releases) 直接下载最新版配置文件）。
-3. 去广告/增强需 **开启 MITM 并安装信任 CA 证书**；部分 App 要清缓存或重装才生效。
-4. 想改抖音去广告/稳定性取舍，见上文「去广告分三层」。
+1. 通过上面的一键导入或手动 URL 导入对应版本到 Loon
+2. 按你选的版本：
+   - 主版：填 `[Proxy]` 自建节点 + `[Remote Proxy]` 订阅
+   - 机场版：只填 `[Remote Proxy]` 订阅 URL
+   - VPS 版：只填 `[Proxy]` 自建节点
+3. 去广告/增强需 **开启 MITM 并安装信任 CA 证书**；部分 App 要清缓存或重装才生效
+4. 想改抖音去广告/稳定性取舍，见上文「去广告分三层」
 
 ## 致谢
 
