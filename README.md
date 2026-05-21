@@ -126,6 +126,14 @@ MyVPS-Reality = VLESS,your.domain.com,8443,"YOUR_UUID",transport=tcp,flow=xtls-r
 
 ## 🚀 一键导入（按你的节点情况三选一）
 
+> ⚠️ **导入 ≠ 立刻能用**：本仓库**只提供规则 / 插件 / 策略组的模板框架**，不带任何可用节点。导入后 Loon 里会出现 `MyVPS-SG / MyVPS-JP / MyVPS-US-1 / MyVPS-US-2 / MyVPS-Reality` 这一组**名字占位节点**——域名 / 端口 / 密码 / UUID 全是 `YOUR_XXX` 假值，**不替换就全部 timeout**。
+>
+> 导入完**必须**做下列至少一项（字段格式见上文「节点配置放哪里」一节）：
+> - **有自建 VPS**：在 Loon 配置编辑器把 `[Proxy]` 段每行的占位符替换成你的真实节点信息
+> - **有机场订阅**：把 `[Remote Proxy]` 段的 `REPLACE_WITH_YOUR_SUB_URL` 改成你机场后台给的订阅 URL，并设 `enabled=true`
+>
+> 完整占位符替换清单见 `loon.conf` 文件顶部 `[Proxy]` 段的中文注释。
+
 iOS Safari 打开下面对应你场景的链接，会自动调起 Loon 完成导入（已安装 Loon 的情况下）：
 
 | 场景 | 一键导入 |
@@ -148,12 +156,13 @@ iOS Safari 打开下面对应你场景的链接，会自动调起 Loon 完成导
 ## 使用步骤
 
 1. 通过上面的一键导入或手动 URL 导入对应版本到 Loon
-2. 按你选的版本：
-   - 主版：填 `[Proxy]` 自建节点 + `[Remote Proxy]` 订阅
-   - 机场版：只填 `[Remote Proxy]` 订阅 URL
-   - VPS 版：只填 `[Proxy]` 自建节点
+2. **必填——不填节点就只有名字，全部 timeout**：
+   - 主版 `loon.conf`：填 `[Proxy]` 自建节点 **+** `[Remote Proxy]` 订阅 URL
+   - 机场版 `loon-airport.conf`：只填 `[Remote Proxy]` 订阅 URL
+   - VPS 版 `loon-vps.conf`：只填 `[Proxy]` 自建节点
 3. 去广告/增强需 **开启 MITM 并安装信任 CA 证书**；部分 App 要清缓存或重装才生效
 4. 想改抖音去广告/稳定性取舍，见上文「去广告分三层」
+5. **自查**：导入后回 Loon 主面板点节点延迟测试，如果所有节点都是 `timeout` / `N/A`，说明你没改 `[Proxy]` 占位符——回到步骤 2
 
 ## 致谢
 
