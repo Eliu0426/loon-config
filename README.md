@@ -2,7 +2,7 @@
 
 一份带详细注释、可直接读懂设计意图的 **Loon 配置**（iOS / iPadOS）。
 
-主打：**国内直连、国外代理、不匹配也尽量直连**，附 AI 服务隔离、链式住宅 IP、分层去广告、流媒体/电竞优化。配置文件本身每个决策点都有中文注释，照着读就行；本 README 只讲整体设计与坑。
+主打：**国内直连、国外代理、不匹配也尽量直连**，附 AI 服务隔离、分层去广告、流媒体/电竞优化。配置文件本身每个决策点都有中文注释，照着读就行；本 README 只讲整体设计与坑。
 
 ## 关于（About）
 
@@ -13,7 +13,7 @@
 - 规则 / 脚本 / 插件均来自社区开源（见「致谢」）；本仓库做的是**编排、注释与取舍**
 - 按实际使用持续迭代，欢迎 Issue / PR
 
-> ⚠️ **安全须知**：`loon.conf` 的 `[Proxy]` 段已**脱敏**，节点全是占位符。务必替换成你自己的，且**不要把真实密码 / UUID / 住宅代理账号提交到公开仓库**——GitHub 上有爬虫专扫代理凭证，几分钟内就会被盗用。
+> ⚠️ **安全须知**：`loon.conf` 的 `[Proxy]` 段已**脱敏**，节点全是占位符。务必替换成你自己的，且**不要把真实密码 / UUID 提交到公开仓库**——GitHub 上有爬虫专扫代理凭证，几分钟内就会被盗用。
 
 ---
 
@@ -45,7 +45,7 @@ FINAL,Final                 # 走到这 = 确认是国外的 → Global 代理
 
 ## 策略组一览
 
-哲学落到策略组就是下面这套。可以直观看到：地区组 + 自动测速、AI 全系经 `Vmrack-Reality` 链式出口、`China = DIRECT`、`Advertising/Privacy = REJECT`、`Final` 兜底走 `Global→US→Vmrack-Reality`。
+哲学落到策略组就是下面这套。可以直观看到：地区组 + 自动测速、AI 全系优先 SG/JP 自建节点、`China = DIRECT`、`Advertising/Privacy = REJECT`、`Final` 兜底走 `Global→US→MyVPS-Reality`。
 
 <table>
   <tr>
@@ -92,7 +92,7 @@ FINAL,Final                 # 走到这 = 确认是国外的 → Global 代理
 ## 其它要点
 
 - **DNS**：`dns-server = system,阿里DNS,腾讯DNS,...` —— **`system` 必须放首位**（v1.1 修复）。原因：很多校园网/酒店网络封了出站 UDP 53 到公网 DNS，节点域名解析直接 timeout 看起来像节点被封，实际只是 DNS 没出去；`system` 让 Loon 用 iOS 当前网络派发的 DNS（家里/4G 走运营商，校园走路由器→上游校园 DNS），三种网络通用一份配置。后面 223/119 是冗余，DoH（阿里 / dnspod / 360）走 443 加密兜底。
-- **AI 隔离**：OpenAI/Claude/Gemini/Grok/DeepSeek 分别走不同出口；Claude/AI-API 经**链式住宅 IP**（设备→VPS→住宅代理→目标），对 AI 风控更友好。
+- **AI 隔离**：OpenAI/Claude/Gemini/Grok/DeepSeek 分别走不同出口；Claude/AI-API 优先走自建 SG 节点（`MyVPS-SG`），可在策略组里自由切换出口，对 AI 风控更友好。
 - **QUIC**：YouTube 定点封 UDP 443 强制走 TCP，否则 MITM 去广告失效。
 - **TikTok vs 抖音**：只收 TikTok 专用域名走代理；抖音那套 `snssdk/pstatp/bytedance` 走直连，注意 `isnssdk≠snssdk`、`ipstatp≠pstatp` 这类 i/sg 前缀变体，互不冲突。
 - **WhatsApp**：已删 3 条超宽 AWS 网段（`/12`、`/15`），那是 WhatsApp 早年跑 AWS 的遗留，会误吞无关流量；现靠域名规则足够。
@@ -110,7 +110,7 @@ FINAL,Final                 # 走到这 = 确认是国外的 → Global 代理
 # Trojan：  名称 = Trojan,你的域名,端口,"密码",transport=tcp,sni=你的域名
 MyVPS-SG = Trojan,your.domain.com,8443,"YOUR_PASSWORD",transport=tcp,sni=your.domain.com
 # VLESS-Reality：public-key/short-id 由服务端给出
-Vmrack-Reality = VLESS,your.domain.com,8443,"YOUR_UUID",transport=tcp,flow=xtls-rprx-vision,public-key="YOUR_KEY",short-id=YOUR_SHORT_ID,udp=true,over-tls=true,sni=www.sony.com
+MyVPS-Reality = VLESS,your.domain.com,8443,"YOUR_UUID",transport=tcp,flow=xtls-rprx-vision,public-key="YOUR_KEY",short-id=YOUR_SHORT_ID,udp=true,over-tls=true,sni=www.sony.com
 ```
 
 ### ② 机场订阅链接 → `[Remote Proxy]` 段（**不是** `[Proxy]`）
@@ -142,8 +142,8 @@ iOS Safari 打开下面对应你场景的链接，会自动调起 Loon 完成导
 **三个变体的区别**（详细差异见各 `.conf` 文件的注释头）：
 
 - **主版 `loon.conf`**：保留全部功能。`[Proxy]` 段填 VPS，`[Remote Proxy]` 段填机场订阅并 `enabled=true`，两者节点都进策略组
-- **机场版 `loon-airport.conf`**：`[Proxy]` 段空、`[Proxy Chain]` 移除；地区组只读订阅过滤；AI 组退化为按地区组优先级（无住宅 IP 链式出口）；**只需填一个订阅 URL 即可用**
-- **VPS 版 `loon-vps.conf`**：`[Remote Proxy]`/`[Remote Filter]` 注释空置；地区组只引自建节点；`Auto`/`Asia-LowLatency` 显式列节点（无 `AllNodes` 过滤器）；保留 `IPRoyal-Via-VPS` 链式出口
+- **机场版 `loon-airport.conf`**：`[Proxy]` 段空；地区组只读订阅过滤；AI 组退化为按地区组优先级；**只需填一个订阅 URL 即可用**
+- **VPS 版 `loon-vps.conf`**：`[Remote Proxy]`/`[Remote Filter]` 注释空置；地区组只引自建节点；`Auto`/`Asia-LowLatency` 显式列节点（无 `AllNodes` 过滤器）
 
 ## 使用步骤
 
